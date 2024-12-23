@@ -1,47 +1,60 @@
 package com.example.banking_app.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import org.w3c.dom.stylesheets.LinkStyle;
-//
-//@Data
-//
-//public class AccountDto {
-//    private Long id;
-//    private String accountHolderName;
-//    private double balance;
-//
-//    public AccountDto(Long id, String accountHolderName, double balance) {
-//        this.id = id;
-//        this.accountHolderName = accountHolderName;
-//        this.balance = balance;
-//    }
-//
-//    public void setId(Long id) {
-//        this.id = id;
-//    }
-//
-//    public void setAccountHolderName(String accountHolderName) {
-//        this.accountHolderName = accountHolderName;
-//    }
-//
-//    public void setBalance(double balance) {
-//        this.balance = balance;
-//    }
-//
-//    public Long getId() {
-//        return id;
-//    }
-//
-//    public String getAccountHolderName() {
-//        return accountHolderName;
-//    }
-//
-//    public double getBalance() {
-//        return balance;
-//    }
-//
-//}
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
-public record AccountDto(Long id, String accountHolderName, double balance) {}
+public class AccountDto {
+    private Long id;
+
+    @NotNull(message = "Account Holder Name cannot be null")
+    private String accountHolderName;
+
+    @NotNull(message = "Balance cannot be null")
+    private Double balance; // Change to Double instead of double
+
+    private String password;
+
+    // Default constructor for deserialization
+    public AccountDto() {}
+
+    // Constructor to initialize the object
+    public AccountDto(Long id, String accountHolderName, Double balance, String password) {
+        this.id = id;
+        this.accountHolderName = accountHolderName;
+        this.balance = balance;
+        this.password = password;
+    }
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getAccountHolderName() {
+        return accountHolderName;
+    }
+
+    public void setAccountHolderName(String accountHolderName) {
+        this.accountHolderName = accountHolderName;
+    }
+
+    public Double getBalance() {
+        return balance;
+    }
+
+    public void setBalance(Double balance) {
+        this.balance = balance;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+}

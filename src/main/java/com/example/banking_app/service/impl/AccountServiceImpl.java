@@ -1,79 +1,107 @@
 package com.example.banking_app.service.impl;
-
+import java.util.List;  // Import the List class from java.util package
+import java.util.stream.Collectors;
 import com.example.banking_app.dto.AccountDto;
 import com.example.banking_app.entity.Account;
-import com.example.banking_app.mapper.AccountMapper;
 import com.example.banking_app.repository.AccountRepository;
 import com.example.banking_app.service.AccountService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import com.example.banking_app.exception.AccountNotFoundException;
+import com.example.banking_app.exception.InvalidPasswordException;
+import com.example.banking_app.exception.InsufficientFundsException;
 
 @Service
 public class AccountServiceImpl implements AccountService {
 
+    @Autowired
     private AccountRepository accountRepository;
-
-    public AccountServiceImpl(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
 
     @Override
     public AccountDto createAccount(AccountDto accountDto) {
-        Account account = AccountMapper.mapToAccount(accountDto);
+        // Create a new Account entity (assuming you're using an ORM like JPA or Hibernate)
+        Account account = new Account();
+        account.setAccountHolderName(accountDto.getAccountHolderName());
+        account.setBalance(accountDto.getBalance());
+        account.setPassword(accountDto.getPassword());
+
+        // Save the account to the database (assuming accountRepository is autowired)
         Account savedAccount = accountRepository.save(account);
-        return AccountMapper.mapToAccountDto(savedAccount);
+
+        // Convert the saved entity to a DTO and return it
+        return new AccountDto(savedAccount.getId(), savedAccount.getAccountHolderName(), savedAccount.getBalance(), savedAccount.getPassword());
     }
 
-    @Override
-    public AccountDto getAccountById(Long id) {
-        Account account = accountRepository
-                .findById(id)
-                .orElseThrow(()-> new RuntimeException("Account does not exist"));
-        return AccountMapper.mapToAccountDto(account);
-    }
 
     @Override
-    public AccountDto deposit(Long id, double amount) {
-        Account account = accountRepository
-                .findById(id)
-                .orElseThrow(()-> new RuntimeException("Account does not exist"));
-        double total = account.getBalance() + amount;
-        account.setBalance(total);
-        Account savedAccount = accountRepository.save(account);
-        return AccountMapper.mapToAccountDto(savedAccount);
-    }
-
-    @Override
-    public AccountDto withdraw(Long id, double amount) {
-        Account account = accountRepository
-                .findById(id)
-                .orElseThrow(()-> new RuntimeException("Account does not exist"));
-        if (account.getBalance() < amount){
-            throw new RuntimeException("Insufficient amount in account");
+    public AccountDto getAccountById(Long id, String password) {
+        Account account = accountRepository.findById(id).orElse(null);
+        if (account == null) {
+            throw new AccountNotFoundException("Account not found");
         }
-        double total = account.getBalance() - amount;
-        account.setBalance(total);
-        Account savedAccount = accountRepository.save(account);
-
-        return AccountMapper.mapToAccountDto(savedAccount);
+        if (!account.getPassword().equals(password)) {
+            throw new InvalidPasswordException("Incorrect password");
+        }
+        return new AccountDto(account.getId(), account.getAccountHolderName(), account.getBalance(), account.getPassword());
     }
 
+
+
     @Override
-    public void deleteAccount(Long id) {
-        Account account = accountRepository
-                .findById(id)
-                .orElseThrow(()-> new RuntimeException("Account does not exist"));
-        accountRepository.deleteById(id);
+    public AccountDto deposit(Long id, double amount, String password) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found with id " + id));
+
+        // Validate password
+        if (!account.getPassword().equals(password)) {
+            throw new InvalidPasswordException("Invalid password.");
+        }
+
+        // Deposit logic
+        account.setBalance(account.getBalance() + amount);
+        accountRepository.save(account);
+
+        // Return updated AccountDto
+        return new AccountDto(account.getId(), account.getAccountHolderName(), account.getBalance(), account.getPassword());
+    }
+
+
+    @Override
+    public AccountDto withdraw(Long id, double amount, String password) {
+        Account account = accountRepository.findById(id)
+                .orElseThrow(() -> new AccountNotFoundException("Account not found with id " + id));
+
+        if (!account.getPassword().equals(password)) {
+            throw new InvalidPasswordException("Invalid password.");
+        }
+
+        // Check if balance is sufficient
+        if (account.getBalance() < amount) {
+            throw new InsufficientFundsException("Insufficient balance.");
+        }
+
+        // Perform the withdrawal
+        account.setBalance(account.getBalance() - amount);
+        accountRepository.save(account);
+
+        // Return updated AccountDto
+        return new AccountDto(account.getId(), account.getAccountHolderName(), account.getBalance(), account.getPassword());
+    }
+
+
+    @Override
+    public boolean deleteAccount(Long id, String password) {
+        Account account = accountRepository.findById(id).orElse(null);
+        if (account == null || !account.getPassword().equals(password)) {
+            return false;
+        }
+        accountRepository.delete(account);
+        return true;
     }
 
     @Override
     public List<AccountDto> getAllAccount() {
-        List<Account> accounts = accountRepository.findAll();
-        return accounts.stream().map((account) -> AccountMapper.mapToAccountDto(account))
-                .collect(Collectors.toList());
+        // Your logic to get all accounts
+        return null;
     }
-
-
 }
