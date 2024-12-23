@@ -1,68 +1,74 @@
 package com.example.banking_app.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import com.example.banking_app.dto.AccountDto;
 import com.example.banking_app.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import jakarta.validation.Valid;
+import com.example.banking_app.exception.InvalidPasswordException;
+
+
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/accounts")
 public class AccountController {
-    private AccountService accountService;
 
-    public AccountController(AccountService accountService) {
-        this.accountService = accountService;
-    }
+    @Autowired
+    private AccountService accountService;  // Ensure this is autowired properly
 
-    //Add account rest api
     @PostMapping
-    public ResponseEntity<AccountDto> addAccount(@RequestBody AccountDto accountDto){
-        return new ResponseEntity<>(accountService.createAccount(accountDto), HttpStatus.CREATED);
+    public ResponseEntity<AccountDto> createAccount(@Valid @RequestBody AccountDto accountDto) {
+        AccountDto createdAccount = accountService.createAccount(accountDto);
+        return ResponseEntity.ok(createdAccount);
     }
 
-    //Get account REST API
+
     @GetMapping("/{id}")
-    public ResponseEntity<?> getAccountById(@PathVariable  Long id){
-       try{
-           AccountDto accountDto = accountService.getAccountById(id);
-           return ResponseEntity.ok(accountDto);
-       }
-       catch (Exception e){
-           System.out.println(e);
-           return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-       }
+    public ResponseEntity<AccountDto> getAccountById(@PathVariable Long id, @RequestParam String password) {
+        AccountDto accountDto = accountService.getAccountById(id, password);
+        if (accountDto != null) {
+            return ResponseEntity.ok(accountDto);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
-    //Deposit REST API
+
+
     @PutMapping("/{id}/deposit")
-    public ResponseEntity<AccountDto> deposit(@PathVariable Long id, @RequestBody Map<String, Double> request){
-        Double amount = request.get("amount");
-        AccountDto accountDto = accountService.deposit(id, amount);
-        return ResponseEntity.ok(accountDto);
+    public ResponseEntity<AccountDto> deposit(@PathVariable Long id,
+                                              @RequestParam double amount,
+                                              @RequestParam String password) {
+        if (password == null || password.isEmpty()) {
+            throw new InvalidPasswordException("Password is required");
+        }
+        AccountDto accountDto = accountService.deposit(id, amount, password);
+        return ResponseEntity.ok(accountDto);  // This will return the updated balance
     }
 
-    //Withdraw REST API
+
     @PutMapping("/{id}/withdraw")
-    public ResponseEntity<AccountDto> withdraw(@PathVariable Long id, @RequestBody Map<String, Double> request){
-        double amount = request.get("amount");
-        AccountDto accountDto = accountService.withdraw(id, amount);
-        return ResponseEntity.ok(accountDto);
+    public ResponseEntity<AccountDto> withdraw(@PathVariable Long id, @RequestParam double amount, @RequestParam String password) {
+        AccountDto accountDto = accountService.withdraw(id, amount, password);
+        return ResponseEntity.ok(accountDto);  // Return updated AccountDto with balance
     }
 
-    //Delete Account REST API
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteAccount(@PathVariable Long id){
-        accountService.deleteAccount(id);
-        return ResponseEntity.ok("Account deleted successfully");
+    public ResponseEntity<Void> deleteAccount(@PathVariable Long id, @RequestParam String password) {
+        boolean isDeleted = accountService.deleteAccount(id, password);
+        if (isDeleted) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
     }
 
-    //Get all Account REST API
     @GetMapping
-    public ResponseEntity<List<AccountDto>> getAllAccount(){
+    public ResponseEntity<List<AccountDto>> getAllAccounts() {
         List<AccountDto> accounts = accountService.getAllAccount();
         return ResponseEntity.ok(accounts);
     }
