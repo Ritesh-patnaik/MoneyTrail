@@ -60,27 +60,3 @@ cashierButton.addEventListener('click', function () {
     }
 });
 
-
-// Theme toggle functionality
-const themeToggleButton = document.getElementById('themeToggle');
-const body = document.body;
-
-// Check if the user has a preferred theme saved in localStorage
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-    body.classList.add(savedTheme);
-    themeToggleButton.textContent = savedTheme === 'dark-mode' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
-}
-
-themeToggleButton.addEventListener('click', () => {
-    // Toggle dark mode class
-    body.classList.toggle('dark-mode');
-
-    // Update localStorage with the current theme
-    const currentTheme = body.classList.contains('dark-mode') ? 'dark-mode' : 'light-mode';
-    localStorage.setItem('theme', currentTheme);
-
-    // Change button text accordingly
-    themeToggleButton.textContent = currentTheme === 'dark-mode' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
-});
-
