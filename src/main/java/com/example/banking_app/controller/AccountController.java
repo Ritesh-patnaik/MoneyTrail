@@ -18,7 +18,7 @@ import java.util.List;
 public class AccountController {
 
     @Autowired
-    private AccountService accountService;  // Ensure this is autowired properly
+    private AccountService accountService;
 
     @PostMapping
     public ResponseEntity<AccountDto> createAccount(@Valid @RequestBody AccountDto accountDto) {
