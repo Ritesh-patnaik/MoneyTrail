@@ -61,6 +61,7 @@ cashierButton.addEventListener('click', function () {
 });
 
 
+
 // Theme toggle functionality
 const themeToggleButton = document.getElementById('themeToggle');
 const body = document.body;
@@ -84,3 +85,4 @@ themeToggleButton.addEventListener('click', () => {
     themeToggleButton.textContent = currentTheme === 'dark-mode' ? 'Switch to Light Mode' : 'Switch to Dark Mode';
 });
 
+ main

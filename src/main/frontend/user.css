@@ -72,27 +72,3 @@ button {
 button:hover {
     background-color: #45a049;
 }
-
-/* Dark Mode Styles */
-body.dark-mode {
-    background-color: #333;
-    color: white;
-}
-
-body.dark-mode .container {
-    background-color: #444;
-}
-
-body.dark-mode input, body.dark-mode select {
-    background-color: #555;
-    color: white;
-    border-color: #777;
-}
-
-body.dark-mode button {
-    background-color: #222;
-}
-
-body.dark-mode button:hover {
-    background-color: #555;
-}
