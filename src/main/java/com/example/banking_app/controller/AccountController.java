@@ -2,6 +2,7 @@ package com.example.banking_app.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.banking_app.dto.AccountDto;
+import com.example.banking_app.entity.Account;
 import com.example.banking_app.service.AccountService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,10 +21,10 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @PostMapping
-    public ResponseEntity<AccountDto> createAccount(@Valid @RequestBody AccountDto accountDto) {
-        AccountDto createdAccount = accountService.createAccount(accountDto);
-        return ResponseEntity.ok(createdAccount);
+   @PostMapping
+    public ResponseEntity<Account> createAccount(@RequestBody Account account) {
+        Account createdAccount = accountService.saveAccount(account);
+        return new ResponseEntity<>(createdAccount, HttpStatus.CREATED);
     }
 
 
@@ -68,8 +69,7 @@ public class AccountController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AccountDto>> getAllAccounts() {
-        List<AccountDto> accounts = accountService.getAllAccount();
-        return ResponseEntity.ok(accounts);
+    public List<Account> getAllAccounts() {
+        return accountService.getAllAccounts();
     }
 }

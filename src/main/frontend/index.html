@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MoneyTrail Banking System</title>
+    <link rel="stylesheet" href="styles.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <header class="navbar">
+    <div class="logo">MoneyTrail</div>
+    <ul class="nav-links">
+        <li><a href="#hero">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#services">Services</a></li>
+        <li><a href="#contact">Contact</a></li>
+
+        <li><a href="/src/main/cashier.html" id="cashierButton">User Login</a></li>
+
+        <li><a href="/src/main/cashier.html" id="cashierButton">Cashier Dashboard</a></li>
+
+        
+
+    </ul>
+</header>
+
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="container">
+            <h2>Welcome to MoneyTrail</h2>
+            <p>Your trusted partner in secure and efficient banking.</p>
+            <button class="btn">Get Started</button>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2>Features</h2>
+            <div class="features-grid">
+                <div class="feature">
+                    <h3>Account Management</h3>
+                    <p>Manage your account details and monitor your balance with ease.</p>
+                </div>
+                <div class="feature">
+                    <h3>Secure Transactions</h3>
+                    <p>Transfer funds securely with multi-layered encryption.</p>
+                </div>
+
+                <div class="feature">
+                    <h3>Budget Tracker</h3>
+                    <p>Track your spending and stay within your financial goals.</p>
+                </div>
+                <div class="feature">
+                    <h3>Loan Calculator</h3>
+                    <p>Estimate loan payments quickly and easily.</p>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section id="services" class="services">
+        <div class="container">
+            <h2>Services</h2>
+            <p>Explore our wide range of banking services tailored for your needs.</p>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2>Contact Us</h2>
+            <form action="backend/contact.php" method="POST">
+                <label for="name">Name:</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" required></textarea>
+
+                <button type="submit" class="btn">Submit</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 MoneyTrail. All rights reserved.</p>
+
+            <button id="themeToggle" class="theme-toggle">Switch to Dark Mode</button>
+
+        </div>
+    </footer>
+</body>
+</html>
